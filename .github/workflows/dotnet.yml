@@ -16,11 +16,13 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build -c Release
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Build StringUtils Project
+      run: dotnet build Kayki.StringUtils/Kayki.StringUtils.csproj -c Release
+    - name: Build StringUtilsTests Project
+      run: dotnet build Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj -c Release
+    - name: Test StringUtilsTests Project
+      run: dotnet test Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj --no-build --verbosity normal
     - name: Push Nuget
       run: |
-        cd Kayki.StringUtils
-        dotnet nuget push YourPackage.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/kaykiletieri/index.json" --skip-duplicate
+        cd Kayki.StringUtils/out
+        dotnet nuget push * .nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/kaykiletieri/index.json" --skip-duplicate
