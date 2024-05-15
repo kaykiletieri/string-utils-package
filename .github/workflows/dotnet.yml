@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '8.0.x' # adjust to your preferred .NET Core version
+        dotnet-version: '8.0.x'
 
     - name: Build solution
       run: dotnet build Kayki.StringUtils.sln --configuration Release
@@ -24,14 +24,12 @@ jobs:
     - name: Run tests
       run: dotnet test Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj --configuration Release
 
+    - name: Build package
+      run: |
+          cd Kayki.StringUtils
+          dotnet build -c Release -o out
+
     - name: Publish package
-      run: dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release --output ../artifacts
-      working-directory: Kayki.StringUtils
-
-    - name: Set up NuGet
-      uses: NuGet/setup-nuget@v1
-      with:
-        nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Publish to GitHub Packages
-      run: nuget push ../artifacts/*.nupkg --source "github"
+      run: |
+        cd Kayki.StringUtils/out
+        dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
