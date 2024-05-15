@@ -22,7 +22,7 @@ jobs:
       run: dotnet build Kayki.StringUtils.sln --configuration Release
 
     - name: Run tests
-      run: dotnet test Kayki.StringUtils/Kayki.StringUtilsTests.csproj --configuration Release
+      run: dotnet test Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj --configuration Release
 
     - name: Publish package
       run: dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release --output ../artifacts
