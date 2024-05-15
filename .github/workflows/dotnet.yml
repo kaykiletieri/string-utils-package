@@ -28,8 +28,14 @@ jobs:
       run: |
           cd Kayki.StringUtils
           dotnet build -c Release -o out
+          
+    - name: Publish to GitHub Packages
+      run: |
+          cd Kayki.StringUtils/out
+          dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
 
-    - name: Publish package
+    
+    - name: Publish to NuGet.org
       run: |
         cd Kayki.StringUtils/out
-        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
+        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
