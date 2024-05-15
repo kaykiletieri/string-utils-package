@@ -26,7 +26,7 @@ jobs:
 
     - name: Publish package
       run: dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release --output ../artifacts
-      working-directory: Kayki.StringUtils/Kayki.StringUtils/bin/Release
+      working-directory: Kayki.StringUtils
 
     - name: Set up NuGet
       uses: NuGet/setup-nuget@v1
