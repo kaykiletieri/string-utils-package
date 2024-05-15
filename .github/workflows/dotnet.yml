@@ -1,26 +1,37 @@
-name: .NET
+name: Publish to GitHub Packages
 
 on:
-  workflow_dispatch:
-  
+  push:
+    branches:
+      - main
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build StringUtils Project
-      run: dotnet build Kayki.StringUtils/Kayki.StringUtils.csproj -c Release
-    - name: Build StringUtilsTests Project
-      run: dotnet build Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj -c Release
-    - name: Push Nuget
-      run: |
-        cd Kayki.StringUtils/out
-        dotnet nuget push * .nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/kaykiletieri/index.json" --skip-duplicate
+        dotnet-version: '8.0.x' # adjust to your preferred .NET Core version
+
+    - name: Build solution
+      run: dotnet build Kayki.StringUtils/Kayki.StringUtils.sln --configuration Release
+
+    - name: Run tests
+      run: dotnet test Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj --configuration Release
+
+    - name: Publish package
+      run: dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release --output ../artifacts
+      working-directory: Kayki.StringUtils/Kayki.StringUtils/bin/Release
+
+    - name: Set up NuGet
+      uses: NuGet/setup-nuget@v1
+      with:
+        nuget-api-key: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish to GitHub Packages
+      run: nuget push ../artifacts/*.nupkg --source "github"
