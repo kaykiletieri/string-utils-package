@@ -32,4 +32,4 @@ jobs:
     - name: Publish package
       run: |
         cd Kayki.StringUtils/out
-        dotnet nuget push *.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
+        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
