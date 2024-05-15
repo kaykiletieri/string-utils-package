@@ -1,7 +1,7 @@
 # Kayki.StringUtils
 
 [![NuGet](https://img.shields.io/nuget/v/Kayki.StringUtils.svg)](https://www.nuget.org/packages/Kayki.StringUtils/)
-[![GitHub](https://img.shields.io/github/license/seu-usuario/seu-repositorio)](https://github.com/seu-usuario/seu-repositorio/blob/main/LICENSE)
+[![GitHub](https://img.shields.io/github/license/kaykiletieri/string-utils-package)](https://github.com/kaykiletieri/string-utils-package/blob/main/LICENSE)
 
 Kayki.StringUtils is a .NET package offering a comprehensive set of utilities for string manipulation and validation tasks.
 
