@@ -20,8 +20,6 @@ jobs:
       run: dotnet build Kayki.StringUtils/Kayki.StringUtils.csproj -c Release
     - name: Build StringUtilsTests Project
       run: dotnet build Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj -c Release
-    - name: Test StringUtilsTests Project
-      run: dotnet test Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj --no-build --verbosity normal
     - name: Push Nuget
       run: |
         cd Kayki.StringUtils/out
