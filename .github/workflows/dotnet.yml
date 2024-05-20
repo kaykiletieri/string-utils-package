@@ -22,7 +22,7 @@ jobs:
       id: calculate-version
       run: |
         # Get the latest tag or fallback to 1.0.0 if no tags are found
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` || echo "1.0.0")
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "1.0.0")
         echo "Latest tag: $latest_tag"
 
         # Extract major, minor, and patch from the tag
@@ -42,12 +42,12 @@ jobs:
         new_version="$major.$minor.$new_patch"
         echo "New version: $new_version"
 
-        # Set the new version as an output
-        echo "::set-output name=version::$new_version"
+        # Set the new version as an environment variable
+        echo "VERSION=$new_version" >> $GITHUB_ENV
 
     - name: Update .csproj version
       run: |
-        new_version=${{ steps.calculate-version.outputs.version }}
+        new_version=${{ env.VERSION }}
         csproj_file="Kayki.StringUtils/Kayki.StringUtils.csproj"
         echo "Updating $csproj_file with version $new_version"
         sed -i "s/<Version>.*<\/Version>/<Version>$new_version<\/Version>/" $csproj_file
