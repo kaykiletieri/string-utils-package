@@ -1,4 +1,4 @@
-name: Publish to GitHub Packages
+name: Publish to GitHub Packages and NuGet
 
 on:
   push:
@@ -6,36 +6,39 @@ on:
       - main
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup .NET Core SDK
+    - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '8.0.x'
 
-    - name: Build solution
-      run: dotnet build Kayki.StringUtils.sln --configuration Release
+    - name: Restore dependencies
+      run: dotnet restore
 
-    - name: Run tests
-      run: dotnet test Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj --configuration Release
+    - name: Build
+      run: dotnet build --configuration Release
 
-    - name: Build package
+    - name: Get Project Version
+      id: base_version
       run: |
-          cd Kayki.StringUtils
-          dotnet build -c Release -o out
-          
+        version=$(grep '<Version>' <Kayki.StringUtils/Kayki.StringUtils.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
+        echo "::set-output name=version::$version"
+
+    - name: Determine version
+      id: version
+      run: echo "::set-output name=version::0.$((${GITHUB_RUN_NUMBER} / 10)).$((${GITHUB_RUN_NUMBER} % 10))"
+
+    - name: Pack
+      run: dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release /p:Version="${{ steps.base_version.outputs.version }}-dev${{ steps.version.outputs.version }}" --output out
+
     - name: Publish to GitHub Packages
-      run: |
-          cd Kayki.StringUtils/out
-          dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
+      run: dotnet nuget push Kayki.StringUtils/out/*.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
 
-    
     - name: Publish to NuGet.org
-      run: |
-        cd Kayki.StringUtils/out
-        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: dotnet nuget push Kayki.StringUtils/out/*.nupkg --api-key ${{ secrets.PKG_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
