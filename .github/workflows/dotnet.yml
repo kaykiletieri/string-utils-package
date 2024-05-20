@@ -1,4 +1,4 @@
-name: Publish to GitHub Packages and NuGet
+name: Publish to GitHub Packages
 
 on:
   push:
@@ -6,46 +6,69 @@ on:
       - main
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup .NET
+    - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '8.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --configuration Release
-
-    - name: Get Project Version
-      id: base_version
+    - name: Calculate version
+      id: calculate-version
       run: |
-        base_version=$(grep '<Version>' Kayki.StringUtils/Kayki.StringUtils.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
-        echo "::set-output name=base_version::$base_version"
+        # Get the latest tag or fallback to 1.0.0 if no tags are found
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` || echo "1.0.0")
+        echo "Latest tag: $latest_tag"
 
-    - name: Determine version
-      id: version
-      run: |
-        run_number=${GITHUB_RUN_NUMBER}
-        echo "::set-output name=version::$run_number"
+        # Extract major, minor, and patch from the tag
+        if [[ $latest_tag =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+          major=${BASH_REMATCH[1]}
+          minor=${BASH_REMATCH[2]}
+          patch=${BASH_REMATCH[3]}
+        else
+          echo "Tag not in expected format. Setting version to 1.0.0"
+          major=1
+          minor=0
+          patch=0
+        fi
 
-    - name: Pack
+        # Increment the patch version
+        new_patch=$((patch + 1))
+        new_version="$major.$minor.$new_patch"
+        echo "New version: $new_version"
+
+        # Set the new version as an output
+        echo "::set-output name=version::$new_version"
+
+    - name: Update .csproj version
       run: |
-        base_version=${{ steps.base_version.outputs.base_version }}
-        run_number=${{ steps.version.outputs.version }}
-        new_version="${base_version}.${run_number}"
-        echo "Packing version $new_version"
-        dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release /p:Version=$new_version --output out
+        new_version=${{ steps.calculate-version.outputs.version }}
+        csproj_file="Kayki.StringUtils/Kayki.StringUtils.csproj"
+        echo "Updating $csproj_file with version $new_version"
+        sed -i "s/<Version>.*<\/Version>/<Version>$new_version<\/Version>/" $csproj_file
+
+    - name: Build solution
+      run: dotnet build Kayki.StringUtils.sln --configuration Release
+
+    - name: Run tests
+      run: dotnet test Kayki.StringUtilsTests/Kayki.StringUtilsTests.csproj --configuration Release
+
+    - name: Build package
+      run: |
+        cd Kayki.StringUtils
+        dotnet build -c Release -o out
 
     - name: Publish to GitHub Packages
-      run: dotnet nuget push Kayki.StringUtils/out/*.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
+      run: |
+        cd Kayki.StringUtils/out
+        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
 
     - name: Publish to NuGet.org
-      run: dotnet nuget push Kayki.StringUtils/out/*.nupkg --api-key ${{ secrets.PKG_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+      run: |
+        cd Kayki.StringUtils/out
+        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
