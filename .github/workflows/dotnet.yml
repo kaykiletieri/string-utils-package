@@ -27,15 +27,22 @@ jobs:
     - name: Get Project Version
       id: base_version
       run: |
-        version=$(grep '<Version>' <Kayki.StringUtils/Kayki.StringUtils.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
-        echo "::set-output name=version::$version"
+        base_version=$(grep '<Version>' Kayki.StringUtils/Kayki.StringUtils.csproj | sed 's/.*<Version>\(.*\)<\/Version>/\1/')
+        echo "::set-output name=base_version::$base_version"
 
     - name: Determine version
       id: version
-      run: echo "::set-output name=version::0.$((${GITHUB_RUN_NUMBER} / 10)).$((${GITHUB_RUN_NUMBER} % 10))"
+      run: |
+        run_number=${GITHUB_RUN_NUMBER}
+        echo "::set-output name=version::$run_number"
 
     - name: Pack
-      run: dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release /p:Version="${{ steps.base_version.outputs.version }}-dev${{ steps.version.outputs.version }}" --output out
+      run: |
+        base_version=${{ steps.base_version.outputs.base_version }}
+        run_number=${{ steps.version.outputs.version }}
+        new_version="${base_version}.${run_number}"
+        echo "Packing version $new_version"
+        dotnet pack Kayki.StringUtils/Kayki.StringUtils.csproj --configuration Release /p:Version=$new_version --output out
 
     - name: Publish to GitHub Packages
       run: dotnet nuget push Kayki.StringUtils/out/*.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json --skip-duplicate
