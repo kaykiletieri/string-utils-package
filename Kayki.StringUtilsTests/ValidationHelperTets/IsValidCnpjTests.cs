@@ -1,7 +1,7 @@
 ﻿using Kayki.StringUtils;
 
 namespace Kayki.StringUtilsTests.ValidationHelperTets;
-public class IsValidCnpj
+public class IsValidCnpjTests
 {
     [Fact]
     public void IsValidCnpj_ShouldReturnTrue_ForValidCnpj()

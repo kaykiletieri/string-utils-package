@@ -10,6 +10,9 @@ public partial class ValidationHelper
     [GeneratedRegex(@"^(http|https)://[^\s/$.?#].[^\s]*$", RegexOptions.IgnoreCase, "pt-BR")]
     private static partial Regex UrlRegex();
 
+    [GeneratedRegex(@"^\d{5}-\d{3}$")]
+    private static partial Regex CepRegex();
+
     public static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -115,6 +118,15 @@ public partial class ValidationHelper
         return cnpj.EndsWith(digit);
     }
 
+    public static bool IsValidCep(string cep)
+    {
+        if (string.IsNullOrWhiteSpace(cep))
+            return false;
+
+        Regex cepRegex = CepRegex();
+        return cepRegex.IsMatch(cep);
+    }
+
     public static bool IsValidDate(string date, string format = "dd/MM/yyyy", CultureInfo? cultureInfo = null)
     {
         if (string.IsNullOrWhiteSpace(date))
@@ -122,5 +134,18 @@ public partial class ValidationHelper
 
         cultureInfo ??= CultureInfo.InvariantCulture;
         return DateTime.TryParseExact(date, format, cultureInfo, DateTimeStyles.None, out _);
+    }
+
+    public static bool IsValidPassword(string password, int minLength = 8, bool requireUppercase = true, bool requireLowercase = true, bool requireDigit = true, bool requireSpecialCharacter = true)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Length < minLength)
+            return false;
+
+        bool hasUppercase = !requireUppercase || password.Any(char.IsUpper);
+        bool hasLowercase = !requireLowercase || password.Any(char.IsLower);
+        bool hasDigit = !requireDigit || password.Any(char.IsDigit);
+        bool hasSpecialChar = !requireSpecialCharacter || password.Any(ch => !char.IsLetterOrDigit(ch));
+
+        return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
     }
 }

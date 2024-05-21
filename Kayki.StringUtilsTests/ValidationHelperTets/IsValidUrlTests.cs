@@ -1,7 +1,7 @@
 ﻿using Kayki.StringUtils;
 
 namespace Kayki.StringUtilsTests.ValidationHelperTets;
-public class IsValidUrl
+public class IsValidUrlTests
 {
     [Fact]
     public void IsValidUrl_ShouldReturnTrue_ForValidUrl()
