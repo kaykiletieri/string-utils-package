@@ -10,6 +10,9 @@ public partial class ValidationHelper
     [GeneratedRegex(@"^(http|https)://[^\s/$.?#].[^\s]*$", RegexOptions.IgnoreCase, "pt-BR")]
     private static partial Regex UrlRegex();
 
+    [GeneratedRegex(@"^\d{5}-\d{3}$")]
+    private static partial Regex CepRegex();
+
     public static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -113,6 +116,15 @@ public partial class ValidationHelper
         digit += remainder.ToString();
 
         return cnpj.EndsWith(digit);
+    }
+
+    public static bool IsValidCep(string cep)
+    {
+        if (string.IsNullOrWhiteSpace(cep))
+            return false;
+
+        Regex cepRegex = CepRegex();
+        return cepRegex.IsMatch(cep);
     }
 
     public static bool IsValidDate(string date, string format = "dd/MM/yyyy", CultureInfo? cultureInfo = null)
