@@ -7,8 +7,8 @@ Kayki.StringUtils is a .NET package offering a comprehensive set of utilities fo
 
 ## Features
 
-- **String Manipulation:** Simplify tasks such as space removal, character counting.
-- **Validation:** Validate various formats including dates, CPF, CNPJ, and emails.
+- **String Manipulation:** Simplify tasks such as space removal, character counting...
+- **Validation:** Validate various formats including dates, CPF, CNPJ, and emails...
 - **Cultural Support:** Adapt date formats and validations according to specific cultures.
 
 ## Installation
