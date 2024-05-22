@@ -1,7 +1,7 @@
 ﻿using Kayki.StringUtils;
 
 namespace Kayki.StringUtilsTests.ValidationHelperTets;
-public class IsValidCep
+public class IsValidCepTests
 {
     [Fact]
     public void IsValidCep_ValidCep_ReturnsTrue()
