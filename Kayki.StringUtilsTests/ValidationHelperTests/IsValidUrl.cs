@@ -1,6 +1,6 @@
 ﻿using Kayki.StringUtils;
 
-namespace Kayki.StringUtilsTests.ValidationHelperTets;
+namespace Kayki.StringUtilsTests.ValidationHelperTests;
 public class IsValidUrl
 {
     [Fact]

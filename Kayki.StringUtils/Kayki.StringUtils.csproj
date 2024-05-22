@@ -10,7 +10,7 @@
     <Description>Kayki.StringUtils is a package for string manipulation and validation in .NET applications. This package offers a comprehensive set of methods to simplify common tasks such as string formatting, safe substring handling, and validation of various formats including dates, CPF, CNPJ, and emails. With a user-friendly and efficient approach, Kayki.StringUtils assists developers in writing cleaner and more robust code when working with string-related operations.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/kaykiletieri/string-utils-package</RepositoryUrl>
-    <PackageTags>string, cpf, cnpj, validation, utils, validação</PackageTags>
+    <PackageTags>string, cpf, cnpj, validation, utils, cep, tel, utilitários, validações, brazil</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

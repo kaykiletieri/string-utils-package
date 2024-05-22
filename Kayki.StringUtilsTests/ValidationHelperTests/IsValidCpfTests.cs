@@ -1,7 +1,7 @@
 ﻿using Kayki.StringUtils;
 
-namespace Kayki.StringUtilsTests.ValidationHelperTets;
-public class IsValidCpf
+namespace Kayki.StringUtilsTests.ValidationHelperTests;
+public class IsValidCpfTests
 {
     [Fact]
     public void IsValidCpf_ShouldReturnTrue_ForValidCpf()

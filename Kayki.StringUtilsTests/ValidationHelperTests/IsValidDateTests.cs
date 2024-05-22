@@ -1,7 +1,7 @@
 ﻿using Kayki.StringUtils;
 using System.Globalization;
 
-namespace Kayki.StringUtilsTests.ValidationHelperTets;
+namespace Kayki.StringUtilsTests.ValidationHelperTests;
 public class IsValidDateTests
 {
     [Fact]
