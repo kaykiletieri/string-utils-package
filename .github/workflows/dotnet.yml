@@ -21,8 +21,11 @@ jobs:
     - name: Calculate version
       id: calculate-version
       run: |
+        # Fetch all tags
+        git fetch --tags
+
         # Get the latest tag or fallback to 1.0.0 if no tags are found
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "1.0.0")
+        latest_tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "1.0.0")
         echo "Latest tag: $latest_tag"
 
         # Extract major, minor, and patch from the tag
@@ -66,9 +69,9 @@ jobs:
     - name: Publish to GitHub Packages
       run: |
         cd Kayki.StringUtils/out
-        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json
+        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_TOKEN }} --source https://nuget.pkg.github.com/kaykiletieri/index.json  --skip-duplicate
 
     - name: Publish to NuGet.org
       run: |
         cd Kayki.StringUtils/out
-        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json
+        dotnet nuget push *.nupkg --api-key ${{ secrets.PKG_NUGET_TOKEN }} --source https://api.nuget.org/v3/index.json --skip-duplicate
