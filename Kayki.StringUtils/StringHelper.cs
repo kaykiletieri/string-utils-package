@@ -51,4 +51,13 @@ public class StringHelper
 
         return input.Substring(startIndex, length);
     }
+
+    public static string Capitalize(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+        return textInfo.ToTitleCase(input.ToLower());
+    }
 }
