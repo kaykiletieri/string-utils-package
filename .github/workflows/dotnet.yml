@@ -83,5 +83,5 @@ jobs:
         new_version=${{ env.VERSION }}
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
-        git tag -a "v$new_version" -m "Release version $new_version"
+        git tag -a "$new_version" -m "Release version $new_version"
         git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/kaykiletieri/string-utils-package.git --tags
