@@ -52,6 +52,17 @@ public class StringHelper
         return input.Substring(startIndex, length);
     }
 
+    public static bool IsPalindrome(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return false;
+
+        string cleaned = new string(input.Where(char.IsLetterOrDigit).ToArray()).ToLower();
+        string reversed = Reverse(cleaned);
+
+        return cleaned == reversed;
+    }
+
     public static string Capitalize(string input)
     {
         if (string.IsNullOrEmpty(input))
