@@ -13,6 +13,9 @@ public partial class ValidationHelper
     [GeneratedRegex(@"^\d{5}-\d{3}$")]
     private static partial Regex CepRegex();
 
+    [GeneratedRegex(@"^[A-Z]{3}-?\d{4}$", RegexOptions.IgnoreCase)]
+    private static partial Regex VehiclePlateRegex();
+
     public static bool IsValidEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -147,5 +150,14 @@ public partial class ValidationHelper
         bool hasSpecialChar = !requireSpecialCharacter || password.Any(ch => !char.IsLetterOrDigit(ch));
 
         return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+    }
+
+    public static bool IsValidVehiclePlate(string plate)
+    {
+        if (string.IsNullOrWhiteSpace(plate))
+            return false;
+
+        Regex plateRegex = VehiclePlateRegex();
+        return plateRegex.IsMatch(plate);
     }
 }
